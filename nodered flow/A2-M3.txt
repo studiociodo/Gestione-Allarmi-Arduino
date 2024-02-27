@@ -1,0 +1,2407 @@
+[
+    {
+        "id": "70ae624b.fe94bc",
+        "type": "tab",
+        "label": "A2-M3"
+    },
+    {
+        "id": "b704f5a.8a5bd08",
+        "type": "debug",
+        "z": "70ae624b.fe94bc",
+        "name": "in debug",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 2906.416816711426,
+        "y": 34.66666793823242,
+        "wires": []
+    },
+    {
+        "id": "65588a9e.800154",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "hex2bin",
+        "func": "function hexToBinary(s) {\n    var i, k, part, ret = '';\n    // lookup table for easier conversion. '0' characters are padded for '1' to '7'\n    var lookupTable = {\n        '0': '0000', '1': '0001', '2': '0010', '3': '0011', '4': '0100',\n        '5': '0101', '6': '0110', '7': '0111', '8': '1000', '9': '1001',\n        'a': '1010', 'b': '1011', 'c': '1100', 'd': '1101',\n        'e': '1110', 'f': '1111',\n        'A': '1010', 'B': '1011', 'C': '1100', 'D': '1101',\n        'E': '1110', 'F': '1111'\n    };\n    for (i = 0; i < s.length; i += 1) {\n        if (lookupTable.hasOwnProperty(s[i])) {\n            ret += lookupTable[s[i]];\n        } else {\n            return { valid: false };\n        }\n    }\n    return ret;\n}\n\nvar inHex = msg.payload;\nvar inBin = hexToBinary(inHex); \nvar outBin = inBin.toString(); \n\n var outmsg = {\n     payload: outBin\n     };\n return outmsg;\n \n \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 122.5,
+        "y": 577,
+        "wires": [
+            [
+                "19709781.906278",
+                "6f6824a2.f6e9ec",
+                "f68843a6.29be3",
+                "103b9d25.33bf03",
+                "613acd66.a47ca4",
+                "1c0f675a.c66839",
+                "7b7ff286.48e50c",
+                "86d83fb8.fe965",
+                "4e0b6d55.e7b7d4",
+                "cb7729f3.ce1c58",
+                "3111d4dd.f0949c",
+                "425c6fbd.5f734",
+                "ccde5383.4bce3",
+                "cb1fa387.093ee",
+                "468acd7b.5b6304",
+                "79d72603.e01d88"
+            ]
+        ]
+    },
+    {
+        "id": "19709781.906278",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(0)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(0); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN1 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN1 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 301.8333435058594,
+        "y": 62.99998474121094,
+        "wires": [
+            [
+                "615b0915.f2a298"
+            ]
+        ]
+    },
+    {
+        "id": "99bd3865.4a5208",
+        "type": "ui_audio",
+        "z": "70ae624b.fe94bc",
+        "name": "riproduci audio",
+        "group": "fb20e16f.3d537",
+        "voice": "10",
+        "always": true,
+        "x": 2918.416816711426,
+        "y": 114.91666984558105,
+        "wires": []
+    },
+    {
+        "id": "e6a890b8.ce1ca",
+        "type": "ui_toast",
+        "z": "70ae624b.fe94bc",
+        "position": "top right",
+        "displayTime": "8",
+        "highlight": "red",
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "topic": "",
+        "name": "notifica flottante",
+        "x": 2919.416816711426,
+        "y": 74.66666984558105,
+        "wires": []
+    },
+    {
+        "id": "94455c90.fc5ed",
+        "type": "file",
+        "z": "70ae624b.fe94bc",
+        "name": "memorizza nel log",
+        "filename": "/log/log.nodered",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "x": 2930.916816711426,
+        "y": 155.41666984558105,
+        "wires": []
+    },
+    {
+        "id": "615b0915.f2a298",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona1",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN1 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN1 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 515.4166946411133,
+        "y": 62.41665744781494,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "4ba2c0d7.67a33",
+                "f7be1c49.ac51d"
+            ]
+        ]
+    },
+    {
+        "id": "e302cd4e.6ce0c",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN1",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 335.1666564941406,
+        "y": 28.666664123535156,
+        "wires": [
+            [
+                "615b0915.f2a298"
+            ]
+        ]
+    },
+    {
+        "id": "5ad905cc.d15e3c",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN1",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 322.5,
+        "y": 98.66665649414062,
+        "wires": [
+            [
+                "615b0915.f2a298"
+            ]
+        ]
+    },
+    {
+        "id": "94964be7.fd1bc8",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN2",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 352.5,
+        "y": 159,
+        "wires": [
+            [
+                "c8d70b59.09fd58"
+            ]
+        ]
+    },
+    {
+        "id": "e935e1b.51f1e2",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN2",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 334.5,
+        "y": 224,
+        "wires": [
+            [
+                "c8d70b59.09fd58"
+            ]
+        ]
+    },
+    {
+        "id": "c8d70b59.09fd58",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona2",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN2 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN2 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 526.5000076293945,
+        "y": 191.50000381469727,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "21454c29.9dc7b4",
+                "cf87c55b.bf39c8"
+            ]
+        ]
+    },
+    {
+        "id": "6f6824a2.f6e9ec",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(1)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(1); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN2 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN2 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 314.5,
+        "y": 192,
+        "wires": [
+            [
+                "c8d70b59.09fd58"
+            ]
+        ]
+    },
+    {
+        "id": "1eb39cda.381c73",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUENZIONE IN3",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 350.66668701171875,
+        "y": 297.04766845703125,
+        "wires": [
+            [
+                "77c905e0.045cec"
+            ]
+        ]
+    },
+    {
+        "id": "87691055.e89f5",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN3",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 340.2381286621094,
+        "y": 360.3333740234375,
+        "wires": [
+            [
+                "77c905e0.045cec"
+            ]
+        ]
+    },
+    {
+        "id": "77c905e0.045cec",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona3",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN3 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN3 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 531.7024002075195,
+        "y": 328.72626304626465,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "37cecdf7.d918b2",
+                "26a9a7f.544ec58"
+            ]
+        ]
+    },
+    {
+        "id": "bc1af8e0.c28f78",
+        "type": "mqtt in",
+        "z": "70ae624b.fe94bc",
+        "name": "",
+        "topic": "/arduino2/check",
+        "qos": "1",
+        "broker": "f0176612.6b41e8",
+        "x": 103.5,
+        "y": 194,
+        "wires": [
+            [
+                "65588a9e.800154"
+            ]
+        ]
+    },
+    {
+        "id": "f0961c3e.474d6",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "dummy",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 2675.4168090820312,
+        "y": 108.66666984558105,
+        "wires": [
+            [
+                "e6a890b8.ce1ca",
+                "99bd3865.4a5208",
+                "94455c90.fc5ed",
+                "b704f5a.8a5bd08",
+                "6359ebf2.ecff04"
+            ]
+        ]
+    },
+    {
+        "id": "19296a8.d0d2596",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona4",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN4 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN4 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 540.833381652832,
+        "y": 451.4167003631592,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "5050c252.8d00ec",
+                "22182f05.90337"
+            ]
+        ]
+    },
+    {
+        "id": "c48e049b.3fc0e8",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN4",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 360.4166946411133,
+        "y": 420.1667003631592,
+        "wires": [
+            [
+                "19296a8.d0d2596"
+            ]
+        ]
+    },
+    {
+        "id": "c21535f8.40a948",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN4",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 342.5000343322754,
+        "y": 484.75001525878906,
+        "wires": [
+            [
+                "19296a8.d0d2596"
+            ]
+        ]
+    },
+    {
+        "id": "2451bdac.e12bd2",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN5",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 365.50000381469727,
+        "y": 538.5000171661377,
+        "wires": [
+            [
+                "7706056c.0389ec"
+            ]
+        ]
+    },
+    {
+        "id": "ce65f294.2055",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN5",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 346.83334732055664,
+        "y": 602.0833835601807,
+        "wires": [
+            [
+                "7706056c.0389ec"
+            ]
+        ]
+    },
+    {
+        "id": "7706056c.0389ec",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona5",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN5 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN5 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 549.0833206176758,
+        "y": 569.9167566299438,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "d3caa1e5.62477",
+                "2d72b1a2.37148e"
+            ]
+        ]
+    },
+    {
+        "id": "f68843a6.29be3",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(2)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(2); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN3 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN3 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 322,
+        "y": 328,
+        "wires": [
+            [
+                "77c905e0.045cec"
+            ]
+        ]
+    },
+    {
+        "id": "103b9d25.33bf03",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(3)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(3); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN4 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN4 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 324.0000228881836,
+        "y": 452.2499542236328,
+        "wires": [
+            [
+                "19296a8.d0d2596"
+            ]
+        ]
+    },
+    {
+        "id": "613acd66.a47ca4",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(4)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(4); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN5 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN5 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 327.49999237060547,
+        "y": 570.000018119812,
+        "wires": [
+            [
+                "7706056c.0389ec"
+            ]
+        ]
+    },
+    {
+        "id": "1c0f675a.c66839",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(5)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(5); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN6 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN6 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 324.50000762939453,
+        "y": 690.5000095367432,
+        "wires": [
+            [
+                "dcd6e624.f1b8e8"
+            ]
+        ]
+    },
+    {
+        "id": "7b7ff286.48e50c",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(6)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(6); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN7 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN7 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 324.74999237060547,
+        "y": 805.7499961853027,
+        "wires": [
+            [
+                "9bd0d29f.d9db8"
+            ]
+        ]
+    },
+    {
+        "id": "86d83fb8.fe965",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(7)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(7); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN8 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN8 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 326.357177734375,
+        "y": 927.7499952316284,
+        "wires": [
+            [
+                "591e9d46.edda94"
+            ]
+        ]
+    },
+    {
+        "id": "4e0b6d55.e7b7d4",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(8)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(8); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN9 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN9 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 780.0000190734863,
+        "y": 58.82145881652832,
+        "wires": [
+            [
+                "4c631118.7c7a1"
+            ]
+        ]
+    },
+    {
+        "id": "cb7729f3.ce1c58",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(9)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(9); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN10 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN10 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 791.6786041259766,
+        "y": 195.1071834564209,
+        "wires": [
+            [
+                "e232fe22.627ad"
+            ]
+        ]
+    },
+    {
+        "id": "3111d4dd.f0949c",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(10)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(10); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN11 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN11 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 804.0833892822266,
+        "y": 330.4880418777466,
+        "wires": [
+            [
+                "71f465dd.139eac"
+            ]
+        ]
+    },
+    {
+        "id": "425c6fbd.5f734",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(11)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(11); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN12 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN12 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 806.4761505126953,
+        "y": 453.40482330322266,
+        "wires": [
+            [
+                "2960ac5b.1f7ce4"
+            ]
+        ]
+    },
+    {
+        "id": "ccde5383.4bce3",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(12)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(12); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN13 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN13 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 796.4880294799805,
+        "y": 569.1189861297607,
+        "wires": [
+            [
+                "810e7273.31e81"
+            ]
+        ]
+    },
+    {
+        "id": "cb1fa387.093ee",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(13)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(13); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN14 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN14 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 798.8332901000977,
+        "y": 682.6666831970215,
+        "wires": [
+            [
+                "9069d97d.111be8"
+            ]
+        ]
+    },
+    {
+        "id": "468acd7b.5b6304",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(14)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(14); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN15 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN15 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 803.2379531860352,
+        "y": 798.833438873291,
+        "wires": [
+            [
+                "3b26fe5e.5fa962"
+            ]
+        ]
+    },
+    {
+        "id": "79d72603.e01d88",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "charAt(15)",
+        "func": "var inBin = msg.payload;\nvar Allarme = inBin.charAt(15); \nvar stato = context.get('stato')||1;\nvar dataora = new Date();\n\n\nif ((stato == '0') && (Allarme === '0')){\n    stato = '1';\n    context.set('stato',stato);\n var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN16 OK\"\n     };\n}   \n\nif ((stato == '1') && (Allarme === '1')){\n    stato = '0';\n    context.set('stato',stato);\n   var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN16 Allarme\"\n     };\n\n}\n\n return outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 807.8095474243164,
+        "y": 920.8572521209717,
+        "wires": [
+            [
+                "b951fee5.b942"
+            ]
+        ]
+    },
+    {
+        "id": "cef16d37.f1733",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN6",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 363.00000762939453,
+        "y": 658.0000095367432,
+        "wires": [
+            [
+                "dcd6e624.f1b8e8"
+            ]
+        ]
+    },
+    {
+        "id": "8a525dcf.bda53",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN6",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 345.50000762939453,
+        "y": 723.0000095367432,
+        "wires": [
+            [
+                "dcd6e624.f1b8e8"
+            ]
+        ]
+    },
+    {
+        "id": "1a358946.107f97",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN7",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 365.25,
+        "y": 773.250020980835,
+        "wires": [
+            [
+                "9bd0d29f.d9db8"
+            ]
+        ]
+    },
+    {
+        "id": "ed5de4be.978598",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN7",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 346.25,
+        "y": 839.2500228881836,
+        "wires": [
+            [
+                "9bd0d29f.d9db8"
+            ]
+        ]
+    },
+    {
+        "id": "dcd6e624.f1b8e8",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona6",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN6 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN6 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 552.0000076293945,
+        "y": 691.2500095367432,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "cfaaefcf.20e3",
+                "55e9045c.443f5c"
+            ]
+        ]
+    },
+    {
+        "id": "9bd0d29f.d9db8",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona7",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN7 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN7 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 553.5,
+        "y": 804.5000219345093,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "a51d7255.25746",
+                "ecd12a12.218a48"
+            ]
+        ]
+    },
+    {
+        "id": "591e9d46.edda94",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona8",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN8 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN8 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 549.0000076293945,
+        "y": 927.7500238418579,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "e48fdc6.69c982",
+                "25340c62.79b914"
+            ]
+        ]
+    },
+    {
+        "id": "4c631118.7c7a1",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona9",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN9 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN9 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1019.5000152587891,
+        "y": 59.25003528594971,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "dc3844e8.fe3fe8",
+                "c9d3af64.16f8a"
+            ]
+        ]
+    },
+    {
+        "id": "e232fe22.627ad",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona10",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN10 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN10 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1022.0000228881836,
+        "y": 193.75003623962402,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "3f02318.d3256ce",
+                "4407897.2178b78"
+            ]
+        ]
+    },
+    {
+        "id": "71f465dd.139eac",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona11",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN11 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN11 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1038.8333892822266,
+        "y": 329.9166316986084,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "c884e8a5.7ce7b8",
+                "3b56a974.014ae6"
+            ]
+        ]
+    },
+    {
+        "id": "18e916f9.5a2b79",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN8",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 366.75000762939453,
+        "y": 896.0000238418579,
+        "wires": [
+            [
+                "591e9d46.edda94"
+            ]
+        ]
+    },
+    {
+        "id": "6553157e.e8e3dc",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN8",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 346.00000762939453,
+        "y": 961.2500257492065,
+        "wires": [
+            [
+                "591e9d46.edda94"
+            ]
+        ]
+    },
+    {
+        "id": "3471abc9.b3b6f4",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN9",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 816.2500152587891,
+        "y": 25.50003147125244,
+        "wires": [
+            [
+                "4c631118.7c7a1"
+            ]
+        ]
+    },
+    {
+        "id": "f9a80e46.afee5",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN9",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 800.0000152587891,
+        "y": 91.25003433227539,
+        "wires": [
+            [
+                "4c631118.7c7a1"
+            ]
+        ]
+    },
+    {
+        "id": "63022634.e987b8",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN10",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 828.7500152587891,
+        "y": 163.25003623962402,
+        "wires": [
+            [
+                "e232fe22.627ad"
+            ]
+        ]
+    },
+    {
+        "id": "c14d4145.455a7",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN10",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 819.7500190734863,
+        "y": 227.75003814697266,
+        "wires": [
+            [
+                "e232fe22.627ad"
+            ]
+        ]
+    },
+    {
+        "id": "799085d0.d4166c",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN11",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 834.5833892822266,
+        "y": 299.66662979125977,
+        "wires": [
+            [
+                "71f465dd.139eac"
+            ]
+        ]
+    },
+    {
+        "id": "6c6b6b7b.da5d14",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN11",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 812.5833892822266,
+        "y": 361.1666316986084,
+        "wires": [
+            [
+                "71f465dd.139eac"
+            ]
+        ]
+    },
+    {
+        "id": "2960ac5b.1f7ce4",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona12",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN12 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN12 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1041.083267211914,
+        "y": 452.08338165283203,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "a9fc5184.55309",
+                "414b6f31.f5b29"
+            ]
+        ]
+    },
+    {
+        "id": "810e7273.31e81",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona13",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN13 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN13 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1045.916633605957,
+        "y": 568.8333015441895,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "628be715.13a7d8",
+                "b673847c.074a28"
+            ]
+        ]
+    },
+    {
+        "id": "9069d97d.111be8",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona14",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN14 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN14 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1043.1667556762695,
+        "y": 683.3333492279053,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "e2148d69.da613",
+                "126d84b4.34b2eb"
+            ]
+        ]
+    },
+    {
+        "id": "3b26fe5e.5fa962",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona15",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN15 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN15 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1037.9999237060547,
+        "y": 798.5000858306885,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "9ea06c96.cec89",
+                "7c70ba73.cac474"
+            ]
+        ]
+    },
+    {
+        "id": "b951fee5.b942",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "CheckZona16",
+        "func": "var dataora = new Date();\nvar man = context.get('man')||0;\nvar ok = \"OK\";\nif ((msg.payload==\"MAN\") && ( man === 0)) {\n    var man=1;\n    context.set('man',man);\n    node.status({fill:\"yellow\",shape:\"dot\",text:\"MANUTENZIONE\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN16 MANUTENZIONE\"\n     };\n}\nif ((msg.payload==\"FIX\") && ( man == 1)) {\n    var man=0;\n    context.set('man',man);\n    node.status({fill:\"green\",shape:\"dot\",text:\"SISTEMATO\"});\n    var outmsg = {\n     payload: dataora.getDate().toString() + \"/\" + ('0' + (dataora.getMonth()+1)).slice(-2).toString() + \"/\" + dataora.getFullYear().toString() + \" \" + ('0' + (dataora.getHours())).slice(-2).toString() + \":\" + ('0' + (dataora.getMinutes())).slice(-2).toString() + \" - Arduino2 Modulo3 IN16 SISTEMATO OK\"\n     };\n}\n\nif ((msg.payload!==\"FIX\") && ( man === 0)) {\n    if (msg.payload.includes(ok)) {\n        node.status({fill:\"green\",shape:\"dot\",text:\"OK\"});\n    } else {\n        node.status({fill:\"red\",shape:\"dot\",text:\"ALLARME\"});\n    }\nvar outmsg = {\n     payload: msg.payload.toString()\n     };\n}\n\nreturn outmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1046.3334999084473,
+        "y": 921.0000324249268,
+        "wires": [
+            [
+                "f0961c3e.474d6",
+                "531a05a3.f92a6c",
+                "cdbac65e.431e58"
+            ]
+        ]
+    },
+    {
+        "id": "225349dc.67a206",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MENUTENZIONE IN12",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 832.5832672119141,
+        "y": 421.0833806991577,
+        "wires": [
+            [
+                "2960ac5b.1f7ce4"
+            ]
+        ]
+    },
+    {
+        "id": "50720c5e.5c0ec4",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN12",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 825.0832672119141,
+        "y": 486.58338165283203,
+        "wires": [
+            [
+                "2960ac5b.1f7ce4"
+            ]
+        ]
+    },
+    {
+        "id": "da0a247b.b12ba8",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN13",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 821.9166030883789,
+        "y": 538.1666522026062,
+        "wires": [
+            [
+                "810e7273.31e81"
+            ]
+        ]
+    },
+    {
+        "id": "7631f598.329c5c",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN13",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 814.9166030883789,
+        "y": 601.16663646698,
+        "wires": [
+            [
+                "810e7273.31e81"
+            ]
+        ]
+    },
+    {
+        "id": "a16d5fc9.822c6",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN14",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 823.5,
+        "y": 651.0000133514404,
+        "wires": [
+            [
+                "9069d97d.111be8"
+            ]
+        ]
+    },
+    {
+        "id": "4c6b7c41.e8ce14",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN14",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 817.4999771118164,
+        "y": 715.3333129882812,
+        "wires": [
+            [
+                "9069d97d.111be8"
+            ]
+        ]
+    },
+    {
+        "id": "fcc3e35b.bccb6",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN15",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 830.3332061767578,
+        "y": 767.1667499542236,
+        "wires": [
+            [
+                "3b26fe5e.5fa962"
+            ]
+        ]
+    },
+    {
+        "id": "1b9bbd2b.b082a3",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN15",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 823.3332290649414,
+        "y": 831.8334217071533,
+        "wires": [
+            [
+                "3b26fe5e.5fa962"
+            ]
+        ]
+    },
+    {
+        "id": "221d7604.a498da",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "MANUTENZIONE IN16",
+        "topic": "",
+        "payload": "MAN",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 832.3333740234375,
+        "y": 889.3334045410156,
+        "wires": [
+            [
+                "b951fee5.b942"
+            ]
+        ]
+    },
+    {
+        "id": "d7a54dc7.c83d9",
+        "type": "inject",
+        "z": "70ae624b.fe94bc",
+        "name": "SISTEMATA IN16",
+        "topic": "",
+        "payload": "FIX",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 826.0000381469727,
+        "y": 954.000057220459,
+        "wires": [
+            [
+                "b951fee5.b942"
+            ]
+        ]
+    },
+    {
+        "id": "52569e32.7f2d7",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN16",
+        "group": "bf236449.bd3db8",
+        "order": 31,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN16",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1980.2383251190186,
+        "y": 921.9047155380249,
+        "wires": []
+    },
+    {
+        "id": "531a05a3.f92a6c",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN16",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1847.8571910858154,
+        "y": 923.333251953125,
+        "wires": [
+            [
+                "52569e32.7f2d7"
+            ]
+        ]
+    },
+    {
+        "id": "cdbac65e.431e58",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 32,
+        "width": 0,
+        "height": 0,
+        "name": "IN16",
+        "label": "16. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1828.571434020996,
+        "y": 891.1903877258301,
+        "wires": []
+    },
+    {
+        "id": "964644c1.0322b8",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN15",
+        "group": "bf236449.bd3db8",
+        "order": 29,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN15",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1979.1071739196777,
+        "y": 795.0000629425049,
+        "wires": []
+    },
+    {
+        "id": "7c70ba73.cac474",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 30,
+        "width": 0,
+        "height": 0,
+        "name": "IN15",
+        "label": "15. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1826.7262992858887,
+        "y": 765.4761905670166,
+        "wires": []
+    },
+    {
+        "id": "9ea06c96.cec89",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN15",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1845.5357513427734,
+        "y": 796.6666812896729,
+        "wires": [
+            [
+                "964644c1.0322b8"
+            ]
+        ]
+    },
+    {
+        "id": "f7be1c49.ac51d",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN1",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1503.714340209961,
+        "y": 74.57143020629883,
+        "wires": [
+            [
+                "c50abbb2.2ce8a8"
+            ]
+        ]
+    },
+    {
+        "id": "2d72b1a2.37148e",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN5",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1498.0000446864535,
+        "y": 517.7142058781214,
+        "wires": [
+            [
+                "a6efcee4.c836b"
+            ]
+        ]
+    },
+    {
+        "id": "37cecdf7.d918b2",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN3",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1503.1429710388184,
+        "y": 286.5714807510376,
+        "wires": [
+            [
+                "f85fca09.ccffc8"
+            ]
+        ]
+    },
+    {
+        "id": "e2148d69.da613",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN14",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1843.4285926818848,
+        "y": 684.5713024139404,
+        "wires": [
+            [
+                "389dbbe4.9ab0c4"
+            ]
+        ]
+    },
+    {
+        "id": "22182f05.90337",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN4",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1505.7143135070799,
+        "y": 403.71426582336403,
+        "wires": [
+            [
+                "ed0e5a2b.341538"
+            ]
+        ]
+    },
+    {
+        "id": "cf87c55b.bf39c8",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN2",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1508.2857666015625,
+        "y": 168.28572177886963,
+        "wires": [
+            [
+                "f9444cff.15de3"
+            ]
+        ]
+    },
+    {
+        "id": "126d84b4.34b2eb",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 28,
+        "width": 0,
+        "height": 0,
+        "name": "IN14",
+        "label": "14. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1823.142734527588,
+        "y": 652.8570861816406,
+        "wires": []
+    },
+    {
+        "id": "389dbbe4.9ab0c4",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN14",
+        "group": "bf236449.bd3db8",
+        "order": 27,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN14",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "95",
+        "seg2": "98",
+        "x": 1976.857162475586,
+        "y": 683.9998903274536,
+        "wires": []
+    },
+    {
+        "id": "4ba2c0d7.67a33",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "IN1",
+        "label": "1. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1492.8571701049805,
+        "y": 42.857093811035156,
+        "wires": []
+    },
+    {
+        "id": "c50abbb2.2ce8a8",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN1",
+        "group": "bf236449.bd3db8",
+        "order": 1,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN1",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1631.4286499023438,
+        "y": 74.28576946258545,
+        "wires": []
+    },
+    {
+        "id": "f9444cff.15de3",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN2",
+        "group": "bf236449.bd3db8",
+        "order": 4,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN2",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1637.1428833007812,
+        "y": 168.57134914398193,
+        "wires": []
+    },
+    {
+        "id": "21454c29.9dc7b4",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "IN2",
+        "label": "2. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1500.0000648498535,
+        "y": 132.85711669921875,
+        "wires": []
+    },
+    {
+        "id": "5050c252.8d00ec",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "IN4",
+        "label": "4. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1497.142936706543,
+        "y": 368.5714416503906,
+        "wires": []
+    },
+    {
+        "id": "d3caa1e5.62477",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 9,
+        "width": 0,
+        "height": 0,
+        "name": "IN5",
+        "label": "5. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1490.2857666015625,
+        "y": 483.4284973144531,
+        "wires": []
+    },
+    {
+        "id": "a6efcee4.c836b",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN5",
+        "group": "bf236449.bd3db8",
+        "order": 10,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN5",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1622.857184273856,
+        "y": 517.1428252628873,
+        "wires": []
+    },
+    {
+        "id": "ed0e5a2b.341538",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN4",
+        "group": "bf236449.bd3db8",
+        "order": 8,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN4",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1625.7143630981445,
+        "y": 402.8570852279663,
+        "wires": []
+    },
+    {
+        "id": "26a9a7f.544ec58",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "IN3",
+        "label": "3. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1495.7143478393555,
+        "y": 255.7143039703369,
+        "wires": []
+    },
+    {
+        "id": "f85fca09.ccffc8",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN3",
+        "group": "bf236449.bd3db8",
+        "order": 6,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN3",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1627.142936706543,
+        "y": 287.142822265625,
+        "wires": []
+    },
+    {
+        "id": "e48fdc6.69c982",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 15,
+        "width": 0,
+        "height": 0,
+        "name": "IN8",
+        "label": "8. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1484.285659790039,
+        "y": 862.8571968078613,
+        "wires": []
+    },
+    {
+        "id": "6a69eb03.ef9954",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN8",
+        "group": "bf236449.bd3db8",
+        "order": 16,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN8",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1614.2856197357178,
+        "y": 894.2857494354248,
+        "wires": []
+    },
+    {
+        "id": "a51d7255.25746",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 13,
+        "width": 0,
+        "height": 0,
+        "name": "IN7",
+        "label": "7. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1487.142780303955,
+        "y": 734.2857975959778,
+        "wires": []
+    },
+    {
+        "id": "1a876ebe.9e4c61",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN7",
+        "group": "bf236449.bd3db8",
+        "order": 14,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN7",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1617.1428565979004,
+        "y": 765.7143888473511,
+        "wires": []
+    },
+    {
+        "id": "cfaaefcf.20e3",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 12,
+        "width": 0,
+        "height": 0,
+        "name": "IN6",
+        "label": "6. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1487.1428778512138,
+        "y": 598.5714435577393,
+        "wires": []
+    },
+    {
+        "id": "7644956a.a5e34c",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN6",
+        "group": "bf236449.bd3db8",
+        "order": 11,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN6",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 1615.714384351458,
+        "y": 632.857105255127,
+        "wires": []
+    },
+    {
+        "id": "55e9045c.443f5c",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN6",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1492.8571739196777,
+        "y": 632.857141494751,
+        "wires": [
+            [
+                "7644956a.a5e34c"
+            ]
+        ]
+    },
+    {
+        "id": "ecd12a12.218a48",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN7",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1494.2857704162598,
+        "y": 767.1428203582764,
+        "wires": [
+            [
+                "1a876ebe.9e4c61"
+            ]
+        ]
+    },
+    {
+        "id": "25340c62.79b914",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN8",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1491.4286193847656,
+        "y": 894.2856960296631,
+        "wires": [
+            [
+                "6a69eb03.ef9954"
+            ]
+        ]
+    },
+    {
+        "id": "c9d3af64.16f8a",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN9",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1867.1427623203822,
+        "y": 87.14274147578635,
+        "wires": [
+            [
+                "360802b1.f3f49e"
+            ]
+        ]
+    },
+    {
+        "id": "414b6f31.f5b29",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN12",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1882.8574752807617,
+        "y": 412.85716247558594,
+        "wires": [
+            [
+                "c7c408a2.7cf4e8"
+            ]
+        ]
+    },
+    {
+        "id": "3b56a974.014ae6",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN11",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1871.4285752432686,
+        "y": 297.1428331647601,
+        "wires": [
+            [
+                "b0a256f8.249058"
+            ]
+        ]
+    },
+    {
+        "id": "b673847c.074a28",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN13",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1874.2857666015625,
+        "y": 530.0001182556152,
+        "wires": [
+            [
+                "d960e95f.26bf78"
+            ]
+        ]
+    },
+    {
+        "id": "3f02318.d3256ce",
+        "type": "function",
+        "z": "70ae624b.fe94bc",
+        "name": "ValueIN10",
+        "func": "var input = msg.payload;\n\nif (input.indexOf('OK') !== -1){var out = 95;}\nif (input.indexOf('MANUTENZIONE') !== -1){var out = 97;}\nif (input.indexOf('Allarme') !== -1){var out = 99;}\nmsg.payload = parseInt(out);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1874.2858772277832,
+        "y": 181.42859363555908,
+        "wires": [
+            [
+                "5e078075.6cdc5"
+            ]
+        ]
+    },
+    {
+        "id": "dc3844e8.fe3fe8",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 17,
+        "width": 0,
+        "height": 0,
+        "name": "IN9",
+        "label": "9. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1859.9998779296875,
+        "y": 51.42841911315918,
+        "wires": []
+    },
+    {
+        "id": "c884e8a5.7ce7b8",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 22,
+        "width": 0,
+        "height": 0,
+        "name": "IN11",
+        "label": "11. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1862.8572006225586,
+        "y": 261.4285354614258,
+        "wires": []
+    },
+    {
+        "id": "a9fc5184.55309",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 23,
+        "width": 0,
+        "height": 0,
+        "name": "IN12",
+        "label": "12. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1864.2860679626465,
+        "y": 381.4285650253296,
+        "wires": []
+    },
+    {
+        "id": "628be715.13a7d8",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 25,
+        "width": 0,
+        "height": 0,
+        "name": "IN13",
+        "label": "13. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1857.1429290771484,
+        "y": 492.85716485977173,
+        "wires": []
+    },
+    {
+        "id": "4407897.2178b78",
+        "type": "ui_text",
+        "z": "70ae624b.fe94bc",
+        "group": "bf236449.bd3db8",
+        "order": 20,
+        "width": 0,
+        "height": 0,
+        "name": "IN10",
+        "label": "10. ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1857.1429443359375,
+        "y": 147.14287281036377,
+        "wires": []
+    },
+    {
+        "id": "360802b1.f3f49e",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN9",
+        "group": "bf236449.bd3db8",
+        "order": 18,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN9",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 2004.2855949401855,
+        "y": 87.14282512664795,
+        "wires": []
+    },
+    {
+        "id": "b0a256f8.249058",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN11",
+        "group": "bf236449.bd3db8",
+        "order": 21,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN11",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 2002.857265472412,
+        "y": 297.1428337097168,
+        "wires": []
+    },
+    {
+        "id": "c7c408a2.7cf4e8",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN12",
+        "group": "bf236449.bd3db8",
+        "order": 24,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN12",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 2024.285945892334,
+        "y": 412.85716247558594,
+        "wires": []
+    },
+    {
+        "id": "d960e95f.26bf78",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN13",
+        "group": "bf236449.bd3db8",
+        "order": 26,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN13",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 2011.428596496582,
+        "y": 531.4286031723022,
+        "wires": []
+    },
+    {
+        "id": "5e078075.6cdc5",
+        "type": "ui_gauge",
+        "z": "70ae624b.fe94bc",
+        "name": "IN10",
+        "group": "bf236449.bd3db8",
+        "order": 19,
+        "width": "1",
+        "height": "1",
+        "gtype": "gage",
+        "title": "IN10",
+        "label": "",
+        "format": "",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "96",
+        "seg2": "98",
+        "x": 2012.857250213623,
+        "y": 181.4286184310913,
+        "wires": []
+    },
+    {
+        "id": "6359ebf2.ecff04",
+        "type": "twitter out",
+        "z": "70ae624b.fe94bc",
+        "twitter": "",
+        "name": "Tweet",
+        "x": 2889.6668090820312,
+        "y": 200.66666984558105,
+        "wires": []
+    },
+    {
+        "id": "ddff3197.089b8",
+        "type": "change",
+        "z": "70ae624b.fe94bc",
+        "name": "mail numero 1",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Notifica da Servizio Tecnico",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "from",
+                "pt": "msg",
+                "to": "mittente@example.com",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "destinatario@example.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 2253.333333333333,
+        "y": 681.6666666666665,
+        "wires": [
+            [
+                "fc82a130.43a3c"
+            ]
+        ]
+    },
+    {
+        "id": "56717fe2.c712c",
+        "type": "change",
+        "z": "70ae624b.fe94bc",
+        "name": "mail numero 2",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Notifica da Servizio Tecnico",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "from",
+                "pt": "msg",
+                "to": "mittente@example.com",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "destinatario@example.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 2255.0000076293945,
+        "y": 796.6666984558105,
+        "wires": [
+            [
+                "fc82a130.43a3c"
+            ]
+        ]
+    },
+    {
+        "id": "fbe30f1b.0488b",
+        "type": "change",
+        "z": "70ae624b.fe94bc",
+        "name": "mail numero 3",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Notifica da Servizio Tecnico",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "from",
+                "pt": "msg",
+                "to": "mittente@example.com",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "destinatario@example.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 2258.3333435058594,
+        "y": 921.666702747345,
+        "wires": [
+            [
+                "fc82a130.43a3c"
+            ]
+        ]
+    },
+    {
+        "id": "fc82a130.43a3c",
+        "type": "e-mail",
+        "z": "70ae624b.fe94bc",
+        "server": "smtp.example.com",
+        "port": "25",
+        "secure": false,
+        "name": "",
+        "dname": "invio email",
+        "x": 2484.9999389648438,
+        "y": 796.6666984558105,
+        "wires": []
+    },
+    {
+        "id": "fb20e16f.3d537",
+        "type": "ui_group",
+        "z": "",
+        "name": "Modulo1",
+        "tab": "dd5264ec.930938",
+        "order": 1,
+        "disp": true,
+        "width": "16"
+    },
+    {
+        "id": "f0176612.6b41e8",
+        "type": "mqtt-broker",
+        "z": "",
+        "broker": "192.168.1.100",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "willTopic": "",
+        "willQos": "1",
+        "willPayload": "",
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": ""
+    },
+    {
+        "id": "bf236449.bd3db8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Modulo3",
+        "tab": "80a41bc3.750cd8",
+        "order": 3,
+        "disp": true,
+        "width": "16"
+    },
+    {
+        "id": "dd5264ec.930938",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Arduino3",
+        "icon": "dashboard",
+        "order": 3
+    },
+    {
+        "id": "80a41bc3.750cd8",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Arduino2",
+        "icon": "dashboard",
+        "order": 2
+    }
+]
