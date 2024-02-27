@@ -2,7 +2,7 @@
 In this folder you can view schematic made with [Fritzing](https://fritzing.org/) and ready exported Gerber to upload for production facilities like JLCPCB, the size of the PCB was designed for this [DIN Rail Box](https://ebmstore.it/index.php?route=product/product&product_id=643&search=DIN).
 for select the module address you have to set the jumpers like reported on image below:
 
-![collegamenti dei moduli](https://github.com/studiociodo/Gestione-Allarmi-Arduino/assets/150088592/5fa78a74-da98-4ff4-8380-93887a325a14)
+![collegamenti dei moduli](https://github.com/studiociodo/Gestione-Allarmi-Arduino/assets/150088592/23a7d38f-9453-445f-b241-aca770ba6c6e)
 
 The main board is "modulo MCU" that use:
 
