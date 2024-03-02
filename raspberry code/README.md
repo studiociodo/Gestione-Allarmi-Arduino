@@ -5,4 +5,7 @@ You need to enable SPI bus on raspi-config, and on boot auto execute this Python
 On system you nedd to install python and realtive depencies, like this:
 
 > apt-get install python3 python3-pip
+
 > pip3 install paho-mqtt
+
+> pip3 install smbus
