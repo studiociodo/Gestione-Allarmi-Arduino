@@ -8,4 +8,6 @@ On system you nedd to install python and realtive depencies, like this:
 
 > pip3 install paho-mqtt
 
+> pip3 install python-time
+
 > pip3 install smbus
